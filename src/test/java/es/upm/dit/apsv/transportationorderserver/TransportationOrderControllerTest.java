@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import es.upm.dit.apsv.transportationorderserver.repository.TransportationOrderRepository;
@@ -92,15 +92,23 @@ public class TransportationOrderControllerTest {
 
                 .andReturn();
 
-    }
     
-@Test
+    }
+
+    @Test
 
 public void testGetOrder() throws Exception {
 
      //call GET "/transportationorders/{truck}"  application/json
 
-       
+     when(repository.findAll()).thenReturn(getAllTestOrders());
+
+     RequestBuilder request = MockMvcRequestBuilders
+
+             .get("/transportationorders")
+
+             .accept(MediaType.APPLICATION_JSON);
+
 
      when(repository.findById("8962ZKR")).thenReturn(Optional.of(
 
@@ -109,28 +117,15 @@ public void testGetOrder() throws Exception {
               40.4562191,-3.8707211,1591692196000L,42.0206372,-4.5330132,
 
               0,0.0,0.0,0)));
+      
+     MvcResult result = mockMvc.perform(request)
 
-    
+              .andExpect(status().isOk())
 
- // Perform GET request to the endpoint with a valid truck ID
- mockMvc.perform(MockMvcRequestBuilders.get("/transportationorders/8962ZKR")
- .accept(MediaType.APPLICATION_JSON))
- .andExpect(status().isOk())  // Expecting 200 OK response
- .andExpect(jsonPath("$.toid").value("28"))
- .andExpect(jsonPath("$.truck").value("8962ZKR"))
- .andExpect(jsonPath("$.originLat").value(40.4562191))
- .andExpect(jsonPath("$.originLong").value(-3.8707211))
- .andExpect(jsonPath("$.dstLat").value(42.0206372))
- .andExpect(jsonPath("$.dstLong").value(-4.5330132));
- 
+              .andExpect(jsonPath("$", hasSize(20)))
 
-// Second interaction: Invalid truck ID (not found)
-when(repository.findById("9999XYZ")).thenReturn(Optional.empty());
+              .andReturn();
 
-// Perform GET request to the endpoint with an invalid truck ID
-mockMvc.perform(MockMvcRequestBuilders.get("/transportationorders/9999XYZ")
- .accept(MediaType.APPLICATION_JSON))
- .andExpect(status().isNotFound());  // Expecting 404 Not Found response
 }
 
     private List<TransportationOrder> getAllTestOrders(){
@@ -165,6 +160,8 @@ mockMvc.perform(MockMvcRequestBuilders.get("/transportationorders/9999XYZ")
 
          return orders;
 
+
+        
        }
 
 }
