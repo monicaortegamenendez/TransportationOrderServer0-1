@@ -116,12 +116,13 @@ public void testGetOrder() throws Exception {
  mockMvc.perform(MockMvcRequestBuilders.get("/transportationorders/8962ZKR")
  .accept(MediaType.APPLICATION_JSON))
  .andExpect(status().isOk())  // Expecting 200 OK response
- .andExpect(jsonPath("$.orderId").value("28"))
- .andExpect(jsonPath("$.truckId").value("8962ZKR"))
- .andExpect(jsonPath("$.latitudeStart").value(40.4562191))
- .andExpect(jsonPath("$.longitudeStart").value(-3.8707211))
- .andExpect(jsonPath("$.latitudeEnd").value(42.0206372))
- .andExpect(jsonPath("$.longitudeEnd").value(-4.5330132));
+ .andExpect(jsonPath("$.toid").value("28"))
+ .andExpect(jsonPath("$.truck").value("8962ZKR"))
+ .andExpect(jsonPath("$.originLat").value(40.4562191))
+ .andExpect(jsonPath("$.originLong").value(-3.8707211))
+ .andExpect(jsonPath("$.dstLat").value(42.0206372))
+ .andExpect(jsonPath("$.dstLong").value(-4.5330132));
+ 
 
 // Second interaction: Invalid truck ID (not found)
 when(repository.findById("9999XYZ")).thenReturn(Optional.empty());
